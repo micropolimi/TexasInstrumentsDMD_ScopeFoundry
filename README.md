@@ -1,4 +1,4 @@
-# DMD_ScopeFoundry
+# TexasInstrumentsDMD_ScopeFoundry
 
 
 Project for the implementation of Texas Instruments controller DLPC900 in ScopeFoundry. 
