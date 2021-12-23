@@ -25,7 +25,7 @@ import numpy
 import os
 import pickle
 
-class DmdDeviceHID:
+class TexasInstrumentsDmdDeviceHID:
     
     def __init__(self):
         
@@ -172,6 +172,18 @@ class DmdDeviceHID:
         self.checkforerrors()
 
 
+    # def configurelut(self,imgnum,repeatnum):
+        
+    #     img=convlen(imgnum,11)
+    #     repeat=convlen(repeatnum,32)
+
+    #     string=repeat+'00000'+img
+
+    #     im_bytes=bitstobytes(string)
+        
+    #     self.command('w',0x00,0x1a,0x31,im_bytes)
+    #     self.checkforerrors()
+    
     def configurelut(self,imgnum,repeatnum):
         img=convlen(imgnum,11)
         repeat=convlen(repeatnum,32)
@@ -184,6 +196,7 @@ class DmdDeviceHID:
         self.checkforerrors()
         
     def definepattern(self,index,exposure,bitdepth,color,triggerin,darktime, triggerout,patind,bitpos):
+        
         
         payload=[]
         index=convlen(index,16)
@@ -299,63 +312,16 @@ class DmdDeviceHID:
             self.checkforerrors()
         print("Time for loading: ", time.clock()-t)
 
-#     def defsequence(self,images,exp,ti,dt,to,rep):
-
-#         self.stopsequence()
-
-#         arr=[]
-
-#         for i in images:
-#             arr.append(i)
-# ##        arr.append(numpy.ones((1080,1920),dtype='uint8'))
-#         num=len(arr)
-        
-#         encodedimages=[]
-#         sizes=[]
-#         t=time.clock()
-        
-#         self.configurelut(num,rep)
-        
-#         for i in range(int((num-1)//24)+1):
-#             print ('merging...')
-#             if i<(int((num-1)//24)):
-#                 imagedata=mergeimages(arr[i*24:(i+1)*24])
-#             else:
-#                 imagedata=mergeimages(arr[i*24:])
-            
-
-#             print('encoding...')
-            
-#             imagedata,size=new_encode(imagedata)
-            
-
-#             encodedimages.append(imagedata)
-#             sizes.append(size)
-
-#             if i<(int((num-1)//24)):
-#                 for j in range(i*24,(i+1)*24):
-#                     self.definepattern(j,exp[j],1,'111',ti[j],dt[j],to[j],i,j-i*24)
-#             else:
-#                 for j in range(i*24,num):
-#                     self.definepattern(j,exp[j],1,'111',ti[j],dt[j],to[j],i,j-i*24)
-        
-#         print ("Time for merging and encoding: ", time.clock()-t)
-        
-
-#         for i in range(int((num-1)//24)+1): #for i in range(len(encodedimages)) should work?
-#             self.setbmp(int((num-1)//24)-i,sizes[int((num-1)//24)-i])
-#             print ('uploading...')
-#             self.bmpload(encodedimages[int((num-1)//24)-i],sizes[int((num-1)//24)-i])
-            
-#         print ("Total time: ", time.clock()-t)
-
-
     def defsequence(self,images,exp,ti,dt,to,rep):
-        
+
         self.stopsequence()
 
-        num = len(images)
-        
+        arr=[]
+
+        for i in images:
+            arr.append(i)
+##        arr.append(numpy.ones((1080,1920),dtype='uint8'))
+        num=len(arr)
         
         encodedimages=[]
         sizes=[]
@@ -366,15 +332,16 @@ class DmdDeviceHID:
         for i in range(int((num-1)//24)+1):
             print ('merging...')
             if i<(int((num-1)//24)):
-                imagedata=mergeimages(images[i*24:(i+1)*24])
+                imagedata=mergeimages(arr[i*24:(i+1)*24])
             else:
-                imagedata=mergeimages(images[i*24:])
+                imagedata=mergeimages(arr[i*24:])
             
 
             print('encoding...')
             
             imagedata,size=new_encode(imagedata)
             
+
             encodedimages.append(imagedata)
             sizes.append(size)
 
@@ -387,12 +354,58 @@ class DmdDeviceHID:
         
         print ("Time for merging and encoding: ", time.clock()-t)
         
+
         for i in range(int((num-1)//24)+1): #for i in range(len(encodedimages)) should work?
             self.setbmp(int((num-1)//24)-i,sizes[int((num-1)//24)-i])
             print ('uploading...')
             self.bmpload(encodedimages[int((num-1)//24)-i],sizes[int((num-1)//24)-i])
             
         print ("Total time: ", time.clock()-t)
+
+#New:
+    # def defsequence(self,images,exp,ti,dt,to,rep):
+        
+    #     self.stopsequence()
+
+    #     num = len(images)
+        
+        
+    #     encodedimages=[]
+    #     sizes=[]
+    #     t=time.clock()
+        
+    #     self.configurelut(num,rep)
+        
+    #     for i in range(int((num-1)//24)+1):
+    #         print ('merging...')
+    #         if i<(int((num-1)//24)):
+    #             imagedata=mergeimages(images[i*24:(i+1)*24])
+    #         else:
+    #             imagedata=mergeimages(images[i*24:])
+            
+
+    #         print('encoding...')
+            
+    #         imagedata,size=new_encode(imagedata)
+            
+    #         encodedimages.append(imagedata)
+    #         sizes.append(size)
+
+    #         if i<(int((num-1)//24)):
+    #             for j in range(i*24,(i+1)*24):
+    #                 self.definepattern(j,exp[j],1,'111',ti[j],dt[j],to[j],i,j-i*24)
+    #         else:
+    #             for j in range(i*24,num):
+    #                 self.definepattern(j,exp[j],1,'111',ti[j],dt[j],to[j],i,j-i*24)
+        
+    #     print ("Time for merging and encoding: ", time.clock()-t)
+        
+    #     for i in range(int((num-1)//24)+1): #for i in range(len(encodedimages)) should work?
+    #         self.setbmp(int((num-1)//24)-i,sizes[int((num-1)//24)-i])
+    #         print ('uploading...')
+    #         self.bmpload(encodedimages[int((num-1)//24)-i],sizes[int((num-1)//24)-i])
+            
+    #     print ("Total time: ", time.clock()-t)
 
 
 
@@ -840,7 +853,7 @@ def new_encode(image):
 
 # if __name__ == "__main__":
     
-#     hiddev = DmdDeviceHID()
+#     hiddev = TexasInstrumentsDmdDeviceHID()
 
 #     import PIL.Image
 
@@ -887,7 +900,7 @@ def new_encode(image):
 
 if __name__ == "__main__":
     
-    hiddev = DmdDeviceHID()
+    hiddev = TexasInstrumentsDmdDeviceHID()
 
     # import PIL.Image
     import tifffile as tiff
@@ -914,32 +927,32 @@ if __name__ == "__main__":
         
         
         
-        # directory = "C:\\Programmi laboratorio\\Patterns\\test_DMD2\\"
-        # filename = "demo_numbers_32_texas.tif"
-        # stack = tiff.imread(directory+filename)
-        # images = list(stack)
-
-        # hiddev.changemode(3)
-        
-        # exposure=[1000000]*len(images)
-        # dark_time=[0]*len(images)
-        # trigger_in=[False]*len(images)
-        # trigger_out=[True]*len(images)
-        # hiddev.defsequence(images,exposure,trigger_in,dark_time,trigger_out, 60)
-        
-        
-        
         directory = "C:\\Programmi laboratorio\\Patterns\\test_DMD2\\"
-        filename = directory + "demo_numbers_32_uint.tif.encd"
+        filename = "demo_numbers_32_texas.tif"
+        stack = tiff.imread(directory+filename)
+        images = list(stack)
+
+        hiddev.changemode(3)
+        
+        exposure=[1000000]*len(images)
+        dark_time=[0]*len(images)
+        trigger_in=[False]*len(images)
+        trigger_out=[True]*len(images)
+        hiddev.defsequence(images,exposure,trigger_in,dark_time,trigger_out, 60)
         
         
-        exposure=[1000000]
-        dark_time=[0]
-        trigger_in=[False]
-        trigger_out=[True]
         
-        hiddev.def_sequence_by_file(filename,exposure,trigger_in,dark_time,trigger_out,0)
-        print("****************\n\nStop Loading sequence!\n\n****************")
+        # directory = "C:\\Programmi laboratorio\\Patterns\\test_DMD2\\"
+        # filename = directory + "demo_numbers_32_uint.tif.encd"
+        
+        
+        # exposure=[1000000]
+        # dark_time=[0]
+        # trigger_in=[False]
+        # trigger_out=[True]
+        
+        # hiddev.def_sequence_by_file(filename,exposure,trigger_in,dark_time,trigger_out,0)
+        # print("****************\n\nStop Loading sequence!\n\n****************")
     
         hiddev.changemode(3)
         hiddev.startsequence()

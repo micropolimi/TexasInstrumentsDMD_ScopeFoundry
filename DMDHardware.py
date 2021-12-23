@@ -13,7 +13,7 @@ Here we define the hardware class to be integrated in a ScopeFoundry app.
 from threading import Thread
 from ScopeFoundry import HardwareComponent
 from qtpy import QtCore, QtWidgets
-from TexasInstrumentsDMD_ScopeFoundry.DMDDeviceHID import DmdDeviceHID
+from TexasInstrumentsDMD_ScopeFoundry.DMDDeviceHID import TexasInstrumentsDmdDeviceHID
 import numpy
 import os
 import sys
@@ -60,7 +60,7 @@ class TexasInstrumentsDmdHW(HardwareComponent):
         
     def connect(self):
         
-        self.dmd = DmdDeviceHID()
+        self.dmd = TexasInstrumentsDmdDeviceHID()
         self.dmd.stopsequence()
         
         self.mode.hardware_set_func = self.dmd.changemode(self.mode.val)
@@ -122,35 +122,35 @@ class TexasInstrumentsDmdHW(HardwareComponent):
     #     self.dmd.defsequence(images,exposure,trigger_input,dark_time,trigger_output,0)
     #     print("****************\n\nStop Loading sequence!\n\n****************")
     
-#Elena   
-    # def load_sequence(self):
+# # Elena   
+#     def load_sequence(self):
         
-    #     filename = self.file_path.val
-    #     images = list(tiff.imread(filename)) # to load 3D stacks
+#         filename = self.file_path.val
+#         images = list(tiff.imread(filename)) # to load 3D stacks
         
-    #   # This works only for 2D patterns:
-    #   # images=[]
-    #   # file_path = os.fsdecode(self.file_path.val)
-    #   # arr = numpy.array(PIL.Image.open(file_path), dtype = numpy.bool)
-    #   # images.append(arr)
+#       # This works only for 2D patterns:
+#       # images=[]
+#       # file_path = os.fsdecode(self.file_path.val)
+#       # arr = numpy.array(PIL.Image.open(file_path), dtype = numpy.bool)
+#       # images.append(arr)
         
-    #     self.settings['pattern_num'] = len(images)
-    #     print("Number of patterns: ", self.settings['pattern_num'])
-    #     fframe = self.first_frame.val
-    #     lframe = self.last_frame.val
-    #     if self.settings['select_frames']:
-    #         images = images[fframe:lframe+1]
+#         self.settings['pattern_num'] = len(images)
+#         print("Number of patterns: ", self.settings['pattern_num'])
+#         fframe = self.first_frame.val
+#         lframe = self.last_frame.val
+#         if self.settings['select_frames']:
+#             images = images[fframe:lframe+1]
             
-    #     exposure=[self.exposure.val]*len(images)
-    #     dark_time=[self.dark_time.val]*len(images)
-    #     trigger_input=[self.trigger_input.val]*len(images)
-    #     trigger_output=[self.trigger_output.val]*len(images)
+#         exposure=[self.exposure.val]*len(images)
+#         dark_time=[self.dark_time.val]*len(images)
+#         trigger_input=[self.trigger_input.val]*len(images)
+#         trigger_output=[self.trigger_output.val]*len(images)
         
         
-    #     self.dmd.defsequence(images,exposure,trigger_input,dark_time,trigger_output,0)
-    #     print("****************\n\nStop Loading sequence!\n\n****************")
+#         self.dmd.defsequence(images,exposure,trigger_input,dark_time,trigger_output,0)
+#         print("****************\n\nStop Loading sequence!\n\n****************")
     
-#New:
+# #New:
     def load_sequence(self):
         
         filename = self.file_path.val
@@ -219,17 +219,4 @@ class TexasInstrumentsDmdHW(HardwareComponent):
             
         self.file_path.log.debug(repr(fname))
         self.file_path.update_value(fname)
-    
-#     @QtCore.Slot()    
-#     def encode_sequence(self):
-#         """
-#         Encode the images in the selected folder and save them in another folder
-#         """
-#     
-#     
-#     def encode_image(self, image):
-#         
-#         encoded, size = self.dmd.new_encode(image)
-        
-            
     
