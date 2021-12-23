@@ -187,25 +187,25 @@ class TexasInstrumentsDmdHW(HardwareComponent):
 
     
     
-    @QtCore.Slot()
+    #@QtCore.Slot()
     def start_sequence(self):
 
         self.dmd.startsequence()
         print("****************\n\nThe sequence starts!\n\n****************")
     
-    @QtCore.Slot()      
+    #@QtCore.Slot()      
     def pause_sequence(self):
 
         self.dmd.pausesequence()
         print("****************\n\nThe sequence pauses!\n\n****************")
     
-    @QtCore.Slot()    
+    #@QtCore.Slot()    
     def stop_sequence(self):
 
         self.dmd.stopsequence()
         print("****************\n\nThe sequence stops!\n\n****************")
     
-    @QtCore.Slot()    
+    #@QtCore.Slot()    
     def file_browser(self):
         """
         Opens a dialog when click on browser, and update the value of the directory
